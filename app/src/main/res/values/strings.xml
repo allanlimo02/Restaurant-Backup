@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">My Restaurant</string>
+    <string name="findRestaurantsButton">Find Restaurants</string>
+    <string name="zip_code">Enter Zip Code</string>
+    <string name="pre_word">"Here are all the restaurants near: "</string>
+    <string name="password_hint">Input your Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="username">Input username</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
