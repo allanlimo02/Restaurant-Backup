@@ -5,7 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 
 import com.moringaschool.myresturant.adapters.RestaurantListAdapter;
 import com.moringaschool.myresturant.model.Business;
+import com.moringaschool.myresturant.model.Category;
 import com.moringaschool.myresturant.network.YelpApi;
 import com.moringaschool.myresturant.model.YelpBusinessesSearchResponse;
 import com.moringaschool.myresturant.network.YelpClient;
@@ -26,6 +30,8 @@ import retrofit2.Response;
 
 public class RestaurantListActivity extends AppCompatActivity {
     private static final String TAG = RestaurantListActivity.class.getSimpleName();
+    private SharedPreferences mSharedPreferences;
+    private String mRecentAddress;
 
     @BindView(R.id.recyclerView) RecyclerView mRecyclerView;
     @BindView(R.id.errorTextView) TextView mErrorTextView;
@@ -39,20 +45,22 @@ public class RestaurantListActivity extends AppCompatActivity {
         super.onStart();
         Toast.makeText(RestaurantListActivity.this,"App is started",Toast.LENGTH_SHORT).show();
     }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants);
         ButterKnife.bind(this);
-
-        Intent intent = getIntent();
+        Intent intent=getIntent();
         String location = intent.getStringExtra("location");
 
+//        String location=mRecentAddress;
+        //Yelp client
         YelpApi client = YelpClient.getClient();
-
         Call<YelpBusinessesSearchResponse> call = client.getRestaurants(location, "restaurants");
+        //SHared preference code
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mRecentAddress = mSharedPreferences.getString(Constants.PREFERENCES_LOCATION_KEY, null);
+        Log.d("Preference", mRecentAddress);
 
         call.enqueue(new Callback<YelpBusinessesSearchResponse>() {
             @Override
@@ -67,7 +75,6 @@ public class RestaurantListActivity extends AppCompatActivity {
                             new LinearLayoutManager(RestaurantListActivity.this);
                     mRecyclerView.setLayoutManager(layoutManager);
                     mRecyclerView.setHasFixedSize(true);
-
                     showRestaurants();
                 } else {
                     showUnsuccessfulMessage();
